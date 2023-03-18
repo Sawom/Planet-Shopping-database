@@ -23,6 +23,13 @@ async function run(){
             const users = await cursor.toArray();
             res.send(users);
         });
+        // search
+        app.get('/search/:name', async(req,res)=>{
+            let regex =  new RegExp(req.params.name,"i")
+            let result = await dbCollection.find({name: regex}).toArray()
+            console.log(result)
+            res.send(result)
+        } )
 
         // data insert for shipment 
         app.post('/shipment', async(req, res)=>{
