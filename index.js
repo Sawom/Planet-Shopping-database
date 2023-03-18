@@ -3,10 +3,10 @@ const cors = require('cors');
 const app = express();
 const port = process.env.PORT || 5000;
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+
 // middleware
 app.use(cors());
 app.use(express.json())
-// 3hbzJVdrRMVQ86oC
 
 const uri = "mongodb+srv://shop:3hbzJVdrRMVQ86oC@cluster0.spurzgo.mongodb.net/?retryWrites=true&w=majority";
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
@@ -23,13 +23,14 @@ async function run(){
             const users = await cursor.toArray();
             res.send(users);
         });
+
         // search
         app.get('/search/:name', async(req,res)=>{
             let regex =  new RegExp(req.params.name,"i")
             let result = await dbCollection.find({name: regex}).toArray()
             console.log(result)
             res.send(result)
-        } )
+        } ) // end
 
         // data insert for shipment 
         app.post('/shipment', async(req, res)=>{
@@ -76,7 +77,7 @@ async function run(){
             res.json(result);
         } );
 
-        // after delete
+        // after delete load data
         app.get('/shipment/:id' , async(req, res)=>{
             const id = req.params.id;
             const query = { _id : new ObjectId(id) };
@@ -95,7 +96,9 @@ async function run(){
 app.get('/', (req, res)=>{
     res.send(" hi from mongo db");
 })
+
 app.listen(port, ()=>{
     console.log(`listen from port ${port}`);
 })
+
 run().catch(err => console.log(err));
