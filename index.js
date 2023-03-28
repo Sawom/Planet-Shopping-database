@@ -24,6 +24,29 @@ async function run(){
             res.send(users);
         });
 
+        //  pagination
+        app.get('/products', async (req, res) => {
+            const page = parseInt(req.query.page);
+            const size = parseInt(req.query.size);
+            // console.log(page, size)
+            const query = {};
+            const cursor = dbCollection.find(query)
+            const products = await cursor.skip(page * size).limit(size).toArray();
+            const count = await dbCollection.estimatedDocumentCount();
+            res.send( {count, products})
+        })
+
+        // pagination
+        app.post('/productsByIds', async(req, res)=>{
+            const ids = req.body;
+            const objectIds = ids.map(id => new ObjectId(id) )
+            console.log(ids);
+            const query = {_id: {$in: objectIds} };
+            const cursor = dbCollection.find(query);
+            const products = await cursor.toArray();
+            res.send(products);
+        })
+
         // search
         app.get('/search/:name', async(req,res)=>{
             let regex =  new RegExp(req.params.name,"i")
